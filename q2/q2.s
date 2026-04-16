@@ -1,6 +1,8 @@
 .data
 format_str:
     .string "%ld "
+without_space:
+    .string "%ld"
 newline_str:
     .string "\n"
 
@@ -126,10 +128,16 @@ main:
 .print_loop:
     bge s3, s0, .print_done
     
-    la a0, format_str    # get ready to print
     slli t1, s3, 3       # i * 8
     add t1, s4, t1       # address of result[i]
     ld a1, 0(t1)         # grab the result number
+    
+    addi t0, s3, 1
+    la a0, format_str   
+    blt t0, s0, .do_print
+    la a0, without_space 
+    
+.do_print:
     call printf          # print it
     
     addi s3, s3, 1       # bump index
